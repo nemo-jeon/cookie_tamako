@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>쿠키런킹덤다마고치</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+    <script>
+        let move_num = "1";
+        let img_arry = ["basic", "eating"];
+        let array_index = 1;
+        let char_motion = "basic";
+
+        $(document).ready(() => {
+            loading_img();
+            char_move();
+        });
+
+        function loading_img(){
+            setTimeout(() => {
+                $(".screen").css("background-image", "none");
+                $(".charactor").css("display", "block");
+            }, 1500);
+        }
+
+        function char_move(){
+            move_num = move_num === "1" ? "2" : "1";
+            $(".charactor").attr("src", "./img/" + char_motion + move_num + ".png");
+            let set_time = setTimeout(char_move, 1000);
+        }
+
+        
+        function btn_click(btn_color){
+            switch(btn_color){
+                case "green":
+                    show_menu();
+                    break;
+                case "blue":
+                    ok_btn();
+                    break;
+                case "red":
+                    cancel_btn()
+                    break;
+                default: break;
+            }
+        };
+
+        function show_menu(){
+            screen_toggle(img_arry[array_index], "none");
+            if(array_index < array_index.length) array_index++;
+            else array_index = 1;
+        };
+
+        function ok_btn(){
+            if(img_arry[array_index] === "eating"){
+                set_char(img_arry[array_index]);
+            }
+            screen_toggle("none", "block");
+                
+            setTimeout(return_basic, 4000);
+
+        }
+
+        function screen_toggle(screen_string, char_string){
+            if(char_string === "none"){
+                $(".screen").css("background-image", "url(./img/" + screen_string + "_menu.png)");
+            }else{
+                $(".screen").css("background-image", screen_string);
+            }
+            
+            $(".charactor").css("display", char_string);
+        }
+
+        function cancel_btn(){
+            screen_toggle("none", "block");
+        }
+
+        function return_basic(){
+            set_char("basic");
+        }
+
+        function set_char(motion){
+            char_motion = motion;
+        }
+
+    </script>
+    
+    <style>
+        html, body {
+            margin: 0 auto;
+            height:100%;
+            overflow:hidden;
+        }
+        .wrap{
+            margin: 0 auto;
+            width: 100%;
+            height: 100%;
+            background-image: url(./img/background.png);
+            display: flex;
+            align-items: center;
+        }
+        .tamako_wrap{
+            margin: auto;
+            width: 375px;
+            height: 812px;
+            border-radius: 20px;
+            background-color: rgba(255, 255, 255 , .3);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .tamako{
+            margin: 0 auto;
+            width: 285px;
+            height: 385px;
+            background-image: url(./img/tamako.png);
+            background-repeat: no-repeat;
+            position: relative;
+        }
+        .riborn{
+            margin: 0 auto;
+            width: 316px;
+            height: 136px;
+            background-image: url(./img/riborn.png);
+        }
+        .screen{
+            width: 152px;
+            height: 142px;
+            border-radius: 10px;
+            background-color: #DFEFE8;
+            background-image: url(./img/loading.gif);
+            position: relative;
+            top: 156px;
+            left: 63px;
+        }
+        .charactor{
+            position: relative;
+            /* left:45px;
+            top:20px; */
+            display: none;
+        }
+        .tamako_btn{
+            width: 50px;
+            height: 50px;
+            position: relative;
+            cursor: pointer;
+        }
+        .btn_green{
+            top: 165px;
+            left: 60px;
+        }
+        .btn_blue{
+            top: 113px;
+            left:113px;
+        }
+        .btn_red{
+            top: 61px;
+            left:166px;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <div class="tamako_wrap">
+            <div class="tamako">
+                <div class="screen">
+                    <img class="charactor" src="./img/basic1.png">
+                </div>
+                <div class="tamako_btn btn_green" onclick="btn_click('green')"></div>
+                <div class="tamako_btn btn_blue" onclick="btn_click('blue')"></div>
+                <div class="tamako_btn btn_red" onclick="btn_click('red')"></div>
+            </div>
+            <div class="riborn">
+
+            </div>
+        </div>
+    </div>
+</body>
+</html>
