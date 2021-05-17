@@ -6,13 +6,21 @@
     <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
     <script>
         let move_num = "1";
-        let img_arry = ["basic", "eating"];
-        let array_index = 1;
+        let img_arry = ["eating", "heart", "health", "stat"];
+        let array_index = 0;
         let char_motion = "basic";
+        let stat_gauge = {
+            eating : 5,
+            heart : 5,
+            health : 5
+        };
+        let sick = false;
+        let poop = false;
 
         $(document).ready(() => {
             loading_img();
             char_move();
+            setInterval(repeat_gauge, 3000);
         });
 
         function loading_img(){
@@ -45,22 +53,35 @@
         };
 
         function show_menu(){
-            screen_toggle(img_arry[array_index], "none");
-            if(array_index < array_index.length) array_index++;
-            else array_index = 1;
+            if(array_index !== img_arry.length){
+                set_char(img_arry[array_index] === "stat" ? "basic" : img_arry[array_index]);
+                screen_toggle(img_arry[array_index], "none");
+            } else {
+                array_index = 0;
+                set_char(img_arry[array_index]);
+                screen_toggle(img_arry[array_index], "none");
+
+            }
+            array_index++;
         };
 
         function ok_btn(){
-            if(img_arry[array_index] === "eating"){
-                set_char(img_arry[array_index]);
+            if(array_index === img_arry.length){
+                $(".stat").css("display", "block")
+                
             }
             screen_toggle("none", "block");
                 
             setTimeout(return_basic, 4000);
 
+            array_index = 0;
+
         }
 
-        function screen_toggle(screen_string, char_string){
+        function screen_toggle(screen_string, char_string){            
+            // if(screen_string === "heart"){
+            //     char_string = "basic";
+            // }
             if(char_string === "none"){
                 $(".screen").css("background-image", "url(./img/" + screen_string + "_menu.png)");
             }else{
@@ -69,9 +90,45 @@
             
             $(".charactor").css("display", char_string);
         }
+        
+        function eating(){
+            if(stat_gauge.eating > 0){
+                stat_down("eating");
+                stat_gauge.eating = stat_gauge.eating - 1; 
+            }
+        }
+
+        function poop_sick_random(){
+            let random = Math.floor(Math.random() * 6) + 1;
+
+
+            if(!(sick || poop)){
+                if(random === 6){
+                    sick = true;
+                    stat_gauge.heart = stat_gauge.heart - 1;
+                    stat_down("heart");
+                } else if(random === 5){
+                    poop = true;
+                    stat_gauge.health = stat_gauge.health - 1;
+                    stat_down("health");
+                }
+            }
+        }
+        
+        function repeat_gauge(){
+            eating();
+            poop_sick_random();
+        }
+
+        function stat_down(stat){
+            $("." + stat + "_gauge").attr("src", "./img/" + stat + "_gauge" + stat_gauge.eating + ".png");
+            
+        }
 
         function cancel_btn(){
+            $(".stat").css("display", "none");
             screen_toggle("none", "block");
+            array_index = 0;
         }
 
         function return_basic(){
@@ -131,6 +188,7 @@
             position: relative;
             top: 156px;
             left: 63px;
+            overflow: hidden;
         }
         .charactor{
             position: relative;
@@ -156,6 +214,20 @@
             top: 61px;
             left:166px;
         }
+        .stat{
+            width: 152px;
+            height: 142px;
+            border-radius: 10px;
+            background-color: #DFEFE8;
+            position: relative;
+            overflow: hidden;
+            top: -142px;
+            display: none;
+        }
+        .stat img{
+            margin:0;
+        }
+
     </style>
 </head>
 <body>
@@ -164,6 +236,11 @@
             <div class="tamako">
                 <div class="screen">
                     <img class="charactor" src="./img/basic1.png">
+                    <div class="stat">
+                        <img class="eating_gauge" src="./img/eating_gauge5.png">
+                        <img class="heart_gauge" src="./img/heart_gauge5.png">
+                        <img class="health_gauge" src="./img/health_gauge5.png">
+                    </div>
                 </div>
                 <div class="tamako_btn btn_green" onclick="btn_click('green')"></div>
                 <div class="tamako_btn btn_blue" onclick="btn_click('blue')"></div>
