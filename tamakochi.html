@@ -16,11 +16,12 @@
         };
         let sick = false;
         let poop = false;
+        let die = false;
 
         $(document).ready(() => {
             loading_img();
             char_move();
-            setInterval(repeat_gauge, 3000);
+            setInterval(repeat_gauge, 5000);
         });
 
         function loading_img(){
@@ -41,6 +42,7 @@
             switch(btn_color){
                 case "green":
                     show_menu();
+                    $(".stat").css("display", "none")
                     break;
                 case "blue":
                     ok_btn();
@@ -72,6 +74,8 @@
             }
             screen_toggle("none", "block");
                 
+            stat_up();
+
             setTimeout(return_basic, 4000);
 
             array_index = 0;
@@ -92,6 +96,8 @@
         }
         
         function eating(){
+            need_change();
+            
             if(stat_gauge.eating > 0){
                 stat_down("eating");
                 stat_gauge.eating = stat_gauge.eating - 1; 
@@ -101,6 +107,19 @@
         function poop_sick_random(){
             let random = Math.floor(Math.random() * 6) + 1;
 
+            need_change();
+
+            if(sick && stat_gauge.heart > 1){
+                stat_gauge.heart = stat_gauge.heart - 1;
+                stat_down("heart")
+                die_count();
+            }
+
+            if(poop && stat_gauge.health > 1){
+                stat_gauge.health = stat_gauge.health - 1;
+                stat_down("health");
+                die_count();
+            }
 
             if(!(sick || poop)){
                 if(random === 6){
@@ -121,8 +140,15 @@
         }
 
         function stat_down(stat){
-            $("." + stat + "_gauge").attr("src", "./img/" + stat + "_gauge" + stat_gauge.eating + ".png");
+            let stat_num = stat === "eating" ? stat_gauge.eating : stat === "heart" ? stat_gauge.heart : stat_gauge.health;
+            $("." + stat + "_gauge").attr("src", "./img/" + stat + "_gauge" + stat_num + ".png");
             
+        }
+
+        function die_count(){
+            if(stat_gauge.eating === 1 || stat_gauge.heart === 1 || stat_gauge.health === 1){
+                setTimeout(die_change, 5000);
+            }
         }
 
         function cancel_btn(){
@@ -137,6 +163,45 @@
 
         function set_char(motion){
             char_motion = motion;
+        }
+
+        function die_change(){
+            if(die)set_char("die");
+        }
+
+        function need_change(){
+            if(sick){
+                set_char("heart_need");
+            } else if(poop){
+                set_char("health_need");
+            } else if(stat_gauge.eating === 1){
+                set_char("eating_need");
+            }
+        }
+
+        function stat_up(){
+            let stat = "";
+
+            if(array_index - 1 === 0 && stat_gauge.eating < 5){
+                stat = "eating"
+                stat_gauge.eating = stat_gauge.eating + 1;
+                console.log(1);
+                die = false;
+            } else if (array_index - 1 === 1){
+                stat = "heart"
+                stat_gauge.heart = 5;
+                sick = false;
+                die = false;
+            } else if(array_index - 1 === 2){
+                stat = "health"
+                stat_gauge.health = 5;
+                poop = false;
+                die = false;
+            }
+
+            let stat_num = stat === "eating" ? stat_gauge.eating : stat === "heart" ? stat_gauge.heart : stat_gauge.health;
+            $("." + stat + "_gauge").attr("src", "./img/" + stat + "_gauge" + stat_num + ".png");
+
         }
 
     </script>
